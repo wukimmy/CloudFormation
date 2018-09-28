@@ -84,13 +84,17 @@
                 "VPC"
             ]
         },
-        "PublicSubnetRouteTableAssociation" : {
-            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-            "Properties" : {
-               "SubnetId" : { "Ref" : "SubnetPublic" },
-               "RouteTableId" : { "Ref" : "RouteTablePublic" }
+        "PublicSubnetRouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "SubnetPublic"
+                },
+                "RouteTableId": {
+                    "Ref": "RouteTablePublic"
+                }
             }
-         },
+        },
         "RouteTablePrivate": {
             "Type": "AWS::EC2::RouteTable",
             "Properties": {
@@ -111,13 +115,17 @@
                 "VPC"
             ]
         },
-        "PrivateSubnetRouteTableAssociation" : {
-            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-            "Properties" : {
-               "SubnetId" : { "Ref" : "SubnetPrivate" },
-               "RouteTableId" : { "Ref" : "RouteTablePrivate" }
+        "PrivateSubnetRouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "SubnetPrivate"
+                },
+                "RouteTableId": {
+                    "Ref": "RouteTablePrivate"
+                }
             }
-         },
+        },
         "RoutePublic": {
             "Type": "AWS::EC2::Route",
             "DependsOn": "IGW",
@@ -134,9 +142,22 @@
                 }
             }
         },
-        
-        
-        
+        "RoutePrivate": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "IGW",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "RouteTablePrivate"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "IGW"
+                },
+                "NatGatewayId": {
+                    "Ref": "NAT"
+                }
+            }
+        },
         "NAT": {
             "DependsOn": "VPCGatewayAttach",
             "Type": "AWS::EC2::NatGateway",
