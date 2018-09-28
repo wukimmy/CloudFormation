@@ -1,127 +1,145 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "AWS CloudFormation Sample Template with VPC, Subnet1 and subnet2, IGWW, NAT and RouterTable",
-  "Parameters": {
-  },
-  "Mappings": {
-  },
-  "Resources": {
-    "VPC": {
-      "Type": "AWS::EC2::VPC",
-      "Properties": {
-        "CidrBlock": "192.0.0.0/16",
-        "EnableDnsSupport": true,
-        "EnableDnsHostnames": true,
-        "InstanceTenancy": "default",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "project VPC"
-          }
-        ]
-      }
-    },
-    "SubnetPublic": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "AvailabilityZone": "us-east-1a",
-        "CidrBlock": "192.0.1.0/24",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "Project public Subnet"
-          }
-        ],
-        "VpcId": {
-          "Ref": "VPC"
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "AWS CloudFormation Sample Template with VPC, Subnet1 and subnet2, IGWW, NAT and RouterTable",
+    "Parameters": {},
+    "Mappings": {},
+    "Resources": {
+        "VPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": "192.0.0.0/16",
+                "EnableDnsSupport": true,
+                "EnableDnsHostnames": true,
+                "InstanceTenancy": "default",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "project VPC"
+                    }
+                ]
+            }
+        },
+        "SubnetPublic": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": "us-east-1a",
+                "CidrBlock": "192.0.1.0/24",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Project public Subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "DependsOn": "VPC"
+        },
+        "SubnetPrivate": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": "us-east-1a",
+                "CidrBlock": "192.0.2.0/24",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Project private Subnet"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "DependsOn": "VPC"
+        },
+        "IGW": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Project IGW"
+                    }
+                ]
+            }
+        },
+        "RouteTablePublic": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Subnet": {
+                    "Ref": "SubnetPublic"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Project public Route Table"
+                    }
+                ]
+            },
+            "DependsOn": [
+                "VPC"
+            ]
+        },
+        "RouteTablePrivate": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Subnet": {
+                    "Ref": "SubnetPrivate"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Project private Route Table "
+                    }
+                ]
+            },
+            "DependsOn": [
+                "VPC"
+            ]
+        },
+        "RoutePublic": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "IGW",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "RouteTablePublic"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "IGW"
+                },
+                "NatGatewayId": {
+                    "Ref": "NAT"
+                }
+            }
+        },
+        "NAT": {
+            "DependsOn": "VPCGatewayAttach",
+            "Type": "AWS::EC2::NatGateway",
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "EIP",
+                        "AllocationId"
+                    ]
+                },
+                "SubnetId": {
+                    "Ref": "SubnetPublic"
+                },
+                "Tags": [
+                    {
+                        "Key": "foo",
+                        "Value": "bar"
+                    }
+                ]
+            }
         }
-      },
-      "DependsOn": "VPC"
-    },
-    "SubnetPrivate": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "AvailabilityZone": "us-east-1a",
-        "CidrBlock": "192.0.2.0/24",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "Project private Subnet"
-          }
-        ],
-        "VpcId": {
-          "Ref": "VPC"
-        }
-      },
-      "DependsOn": "VPC"
-    },
-    "IGW": {
-      "Type": "AWS::EC2::InternetGateway",
-      "Properties": {
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "Project IGW"
-          }
-        ]
-      }
-    },
-    "myRouteTable": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "Subnet": {
-          "Ref": "Subnet1"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "ProjetinhoCF Route Table"
-          }
-        ]
-      },
-      "DependsOn": [
-        "VPC"
-      ]
-    },
-    "myRoute": {
-      "Type": "AWS::EC2::Route",
-      "DependsOn": "IGW",
-      "Properties": {
-        "RouteTableId": {
-          "Ref": "myRouteTable"
-        },
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": {
-          "Ref": "IGW"
-        },
-        "NatGatewayId": {
-          "Ref": "NAT"
-        }
-      }
-    },
-    "NAT": {
-      "DependsOn": "VPCGatewayAttach",
-      "Type": "AWS::EC2::NatGateway",
-      "Properties": {
-        "AllocationId": {
-          "Fn::GetAtt": [
-            "EIP",
-            "AllocationId"
-          ]
-        },
-        "SubnetId": {
-          "Ref": "Subnet1"
-        },
-        "Tags": [
-          {
-            "Key": "foo",
-            "Value": "bar"
-          }
-        ]
-      }
     }
-  }
 }
