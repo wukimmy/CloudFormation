@@ -1,0 +1,156 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+  
+    "Description" : "AWS CloudFormation Template of a EC2InstanceWithSecurityGroupSample: Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  
+    "Parameters" : {
+      "KeyName": {
+        "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+        "Type": "AWS::EC2::KeyPair::KeyName",
+        "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+      },
+  
+      "InstanceType" : {
+        "Description" : "WebServer EC2 instance type",
+        "Type" : "String",
+        "Default" : "t2.micro",
+        "AllowedValues" : [ "t2.micro"]
+  ,
+        "ConstraintDescription" : "must be a valid EC2 instance type."
+      },
+  
+      "SSHLocation" : {
+        "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+        "Type": "String",
+        "MinLength": "9",
+        "MaxLength": "18",
+        "Default": "0.0.0.0/0",
+        "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+        "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+     }
+    },
+  
+    "Mappings" : {
+      "AWSInstanceType2Arch" : {
+        "t2.micro"    : { "Arch" : "HVM64"  }
+      },
+  
+      "AWSInstanceType2NATArch" : {
+        "t2.micro"    : { "Arch" : "NATHVM64" }
+      }
+  ,
+      "AWSRegionArch2AMI" : {
+        "us-east-1"        : {"HVM64" : "ami-04681a1dbd79675a5", "HVMG2" : "ami-0a584ac55a7631c0c"}
+      }
+  
+    },
+  
+    "Resources" : {
+      "VPC" : {
+        "Type" : "AWS::EC2::VPC",
+        "Properties" : {
+          "CidrBlock" : "192.0.0.0/16",
+          "EnableDnsSupport" : true,
+          "EnableDnsHostnames" : true,
+          "InstanceTenancy" : "default",
+          "Tags" : [ { "Key" : "Name", "Value" : "ProjetinhoCF" } ]
+        }
+      },
+  
+      "Subnet1" : {
+        "Type" : "AWS::EC2::Subnet",
+        "Properties" : {
+          "AvailabilityZone" : "us-east-1a",
+          "CidrBlock" : "192.0.1.0/24",
+          "MapPublicIpOnLaunch": "true",
+          "Tags" : [ { "Key" : "Name", "Value" : "ProjetinhoCF Public Subnet 1" } ],
+          "VpcId" : { "Ref" : "VPC" }
+        }
+      },
+  
+      "Subnet2" : {
+        "Type" : "AWS::EC2::Subnet",
+        "Properties" : {
+          "AvailabilityZone" : "us-east-1b",
+          "CidrBlock" : "192.0.2.0/24",
+          "MapPublicIpOnLaunch": "true",
+          "Tags" : [ { "Key" : "Name", "Value" : "ProjetinhoCF Public Subnet 2" } ],
+          "VpcId" : { "Ref" : "VPC" }
+        }
+      },
+  
+      "EC2Instance" : {
+        "Type" : "AWS::EC2::Instance",
+  
+        "Properties" : {
+          "InstanceType" : { "Ref" : "InstanceType" },
+          "NetworkInterfaces": [ {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref" : "InstanceSecurityGroup" }],
+            "SubnetId": { "Ref" : "Subnet1" }
+          } ],
+          "KeyName" : { "Ref" : "KeyName" },
+          "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                            { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+          "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+            "#!/bin/bash -xe\n",
+            "sudo yum update -y\n",
+            "yum -y install git\n",
+            "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
+            ". /.nvm/nvm.sh\n",
+            "nvm install 4.4.5\n",
+            "git clone https://github.com/bemer/tech-u.git\n",
+            "cd tech-u\n",
+            "npm install\n",
+            "npm install --global gulp\n",
+            "gulp\n",
+            "sudo amazon-linux-extras install -y nginx1.12\n",
+            "sudo cp -rf /tech-u /usr/share/nginx/html/\n",
+            "sudo nginx\n"
+          ]]}}
+        }
+      },
+  
+      "InstanceSecurityGroup" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+          "GroupName" : "ProjetinhoSG",
+          "GroupDescription" : "Enable SSH access via port 22",
+          "VpcId": {"Ref" : "VPC"},
+          "SecurityGroupIngress" : [ {
+            "IpProtocol" : "tcp",
+            "FromPort" : "22",
+            "ToPort" : "22",
+            "CidrIp" : { "Ref" : "SSHLocation"}
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          }]
+        }
+      }
+    },
+  
+    "Outputs" : {
+      "InstanceId" : {
+        "Description" : "InstanceId of the newly created EC2 instance",
+        "Value" : { "Ref" : "EC2Instance" }
+      },
+      "AZ" : {
+        "Description" : "Availability Zone of the newly created EC2 instance",
+        "Value" : { "Fn::GetAtt" : [ "EC2Instance", "AvailabilityZone" ] }
+      },
+      "PublicDNS" : {
+        "Description" : "Public DNSName of the newly created EC2 instance",
+        "Value" : { "Fn::GetAtt" : [ "EC2Instance", "PublicDnsName" ] }
+      },
+      "PublicIP" : {
+        "Description" : "Public IP address of the newly created EC2 instance",
+        "Value" : { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] }
+      }
+    }
+  }
+  
