@@ -1,16 +1,77 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "AWS CloudFormation Sample Template with VPC, Subnet1 and subnet2, IGWW, NAT and RouterTable",
-    "Parameters": {},
-    "Mappings": {},
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the bastion host",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
+        },
+        "SSHLocation": {
+            "Description": "The IP address range that can be used to SSH to the EC2 instances",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "0.0.0.0/0",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+        },
+        "EC2InstanceType": {
+            "Description": "EC2 instance type",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": [
+                "t1.micro",
+                "t2.nano",
+                "t2.micro",
+                "t2.small"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        }
+    },
+    "Mappings": {
+        "SubnetConfig": {
+            "VPC": {
+                "CIDR": "192.0.0.0/16"
+            },
+            "Public1": {
+                "CIDR": "192.0.1.0/24"
+            },
+            "Public2": {
+                "CIDR": "192.0.2.0/24"
+            }
+        },
+        "AWSInstanceType2Arch": {
+            "t2.micro": {
+                "Arch": "HVM64"
+            }
+        },
+        "AWSInstanceType2NATArch": {
+            "t2.micro": {
+                "Arch": "NATHVM64"
+            }
+        },
+        "AWSRegionArch2AMI": {
+            "us-east-1": {
+                "HVM64": "ami-04681a1dbd79675a5",
+                "HVMG2": "ami-0a584ac55a7631c0c"
+            }
+        }
+    },
     "Resources": {
         "VPC": {
             "Type": "AWS::EC2::VPC",
             "Properties": {
-                "CidrBlock": "192.0.0.0/16",
                 "EnableDnsSupport": true,
                 "EnableDnsHostnames": true,
                 "InstanceTenancy": "default",
+                "CidrBlock": {
+                    "Fn::FindInMap": [
+                        "SubnetConfig",
+                        "VPC",
+                        "CIDR"
+                    ]
+                },
                 "Tags": [
                     {
                         "Key": "Name",
@@ -23,28 +84,17 @@
             "Type": "AWS::EC2::Subnet",
             "Properties": {
                 "AvailabilityZone": "us-east-1a",
-                "CidrBlock": "192.0.1.0/24",
+                "CidrBlock": {
+                    "Fn::FindInMap": [
+                        "SubnetConfig",
+                        "Public1",
+                        "CIDR"
+                    ]
+                },
                 "Tags": [
                     {
                         "Key": "Name",
                         "Value": "Project public Subnet"
-                    }
-                ],
-                "VpcId": {
-                    "Ref": "VPC"
-                }
-            },
-            "DependsOn": "VPC"
-        },
-        "SubnetPrivate": {
-            "Type": "AWS::EC2::Subnet",
-            "Properties": {
-                "AvailabilityZone": "us-east-1a",
-                "CidrBlock": "192.0.2.0/24",
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "Project private Subnet"
                     }
                 ],
                 "VpcId": {
@@ -64,14 +114,22 @@
                 ]
             }
         },
+        "GatewayToInternet": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "InternetGatewayId": {
+                    "Ref": "IGW"
+                }
+            }
+        },
         "RouteTablePublic": {
             "Type": "AWS::EC2::RouteTable",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
-                },
-                "Subnet": {
-                    "Ref": "SubnetPublic"
                 },
                 "Tags": [
                     {
@@ -95,37 +153,6 @@
                 }
             }
         },
-        "RouteTablePrivate": {
-            "Type": "AWS::EC2::RouteTable",
-            "Properties": {
-                "VpcId": {
-                    "Ref": "VPC"
-                },
-                "Subnet": {
-                    "Ref": "SubnetPrivate"
-                },
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "Project private Route Table "
-                    }
-                ]
-            },
-            "DependsOn": [
-                "VPC"
-            ]
-        },
-        "PrivateSubnetRouteTableAssociation": {
-            "Type": "AWS::EC2::SubnetRouteTableAssociation",
-            "Properties": {
-                "SubnetId": {
-                    "Ref": "SubnetPrivate"
-                },
-                "RouteTableId": {
-                    "Ref": "RouteTablePrivate"
-                }
-            }
-        },
         "RoutePublic": {
             "Type": "AWS::EC2::Route",
             "DependsOn": "IGW",
@@ -136,47 +163,122 @@
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "GatewayId": {
                     "Ref": "IGW"
-                },
-                "NatGatewayId": {
-                    "Ref": "NAT"
                 }
             }
         },
-        "RoutePrivate": {
-            "Type": "AWS::EC2::Route",
-            "DependsOn": "IGW",
+        "EC2Host1": {
+            "Type": "AWS::EC2::Instance",
+            "DependsOn": "GatewayToInternet",
             "Properties": {
-                "RouteTableId": {
-                    "Ref": "RouteTablePrivate"
+                "InstanceType": {
+                    "Ref": "EC2InstanceType"
                 },
-                "DestinationCidrBlock": "0.0.0.0/0",
-                "GatewayId": {
-                    "Ref": "IGW"
+                "KeyName": {
+                    "Ref": "KeyName"
                 },
-                "NatGatewayId": {
-                    "Ref": "NAT"
-                }
-            }
-        },
-        "NAT": {
-            "DependsOn": "VPCGatewayAttach",
-            "Type": "AWS::EC2::NatGateway",
-            "Properties": {
-                "AllocationId": {
-                    "Fn::GetAtt": [
-                        "EIP",
-                        "AllocationId"
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSRegionArch2AMI",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        {
+                            "Fn::FindInMap": [
+                                "AWSInstanceType2Arch",
+                                {
+                                    "Ref": "EC2InstanceType"
+                                },
+                                "Arch"
+                            ]
+                        }
                     ]
                 },
-                "SubnetId": {
-                    "Ref": "SubnetPublic"
-                },
-                "Tags": [
+                "NetworkInterfaces": [
                     {
-                        "Key": "foo",
-                        "Value": "bar"
+                        "GroupSet": [
+                            {
+                                "Ref": "EC2SecurityGroup"
+                            }
+                        ],
+                        "AssociatePublicIpAddress": "true",
+                        "DeviceIndex": "0",
+                        "DeleteOnTermination": "true",
+                        "SubnetId": {
+                            "Ref": "SubnetPublic"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "sudo yum update -y\n",
+                                "yum -y install git\n",
+                                "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
+                                ". /.nvm/nvm.sh\n",
+                                "nvm install 4.4.5\n",
+                                "git clone https://github.com/bemer/tech-u.git\n",
+                                "cd tech-u\n",
+                                "npm install\n",
+                                "npm install --global gulp\n",
+                                "gulp\n",
+                                "sudo amazon-linux-extras install -y nginx1.12\n",
+                                "sudo cp -rf /tech-u /usr/share/nginx/html/\n",
+                                "sudo nginx\n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        "EC2SecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable access to the EC2 host",
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": {
+                            "Ref": "SSHLocation"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
                     }
                 ]
+            }
+        },
+        "AutoScalingGroup": {
+            "UpdatePolicy": {
+                "AutoScalingRollingUpdate": {
+                    "MinInstancesInService": "1",
+                    "MaxBatchSize": "1",
+                    "PauseTime": "PT12M5S",
+                    "WaitOnResourceSignals": "true"
+                }
+            },
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AvailabilityZones": {
+                    "Fn::GetAZs": {
+                        "Ref": "AWS::Region"
+                    }
+                },
+                "LaunchConfigurationName": {
+                    "Ref": "ASLC"
+                },
+                "MaxSize": "3",
+                "MinSize": "1"
             }
         }
     }
