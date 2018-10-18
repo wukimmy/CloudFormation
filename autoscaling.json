@@ -1,5 +1,5 @@
 {
-    "AWSTemplateFormatVersion": "20108-10-18",
+    "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "AWS CloudFormation Template",
     "Parameters": {
         "KeyName": {
@@ -52,163 +52,13 @@
             }
         },
         "AWSInstanceType2NATArch": {
-            "t1.micro": {
-                "Arch": "NATHVM64"
-            },
-            "t2.nano": {
-                "Arch": "NATHVM64"
-            },
             "t2.micro": {
-                "Arch": "NATHVM64"
-            },
-            "t2.small": {
-                "Arch": "NATHVM64"
-            },
-            "t2.medium": {
-                "Arch": "NATHVM64"
-            },
-            "t2.large": {
-                "Arch": "NATHVM64"
-            },
-            "m1.small": {
                 "Arch": "NATHVM64"
             },
             "m1.medium": {
                 "Arch": "NATHVM64"
             },
-            "m1.large": {
-                "Arch": "NATHVM64"
-            },
-            "m1.xlarge": {
-                "Arch": "NATHVM64"
-            },
             "m2.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m2.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m2.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m3.medium": {
-                "Arch": "NATHVM64"
-            },
-            "m3.large": {
-                "Arch": "NATHVM64"
-            },
-            "m3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.large": {
-                "Arch": "NATHVM64"
-            },
-            "m4.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.10xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c1.medium": {
-                "Arch": "NATHVM64"
-            },
-            "c1.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.large": {
-                "Arch": "NATHVM64"
-            },
-            "c3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.large": {
-                "Arch": "NATHVM64"
-            },
-            "c4.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "g2.2xlarge": {
-                "Arch": "NATHVMG2"
-            },
-            "g2.8xlarge": {
-                "Arch": "NATHVMG2"
-            },
-            "r3.large": {
-                "Arch": "NATHVM64"
-            },
-            "r3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "hi1.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "hs1.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "cr1.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "cc2.8xlarge": {
                 "Arch": "NATHVM64"
             }
         },
@@ -263,7 +113,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "Public Subnet 2.2"
+                        "Value": "Public Subnet 1"
                     },
                     {
                         "Key": "Application",
@@ -296,7 +146,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "Public Subnet 2.2"
+                        "Value": "Public Subnet 2"
                     },
                     {
                         "Key": "Application",
@@ -318,7 +168,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "ProjetinhoCF IGW"
+                        "Value": "InternetGateway - projetinho"
                     },
                     {
                         "Key": "Application",
@@ -353,7 +203,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "ProjetinhoCF Route Table 1"
+                        "Value": "Projetinho Route Table 1"
                     },
                     {
                         "Key": "Application",
@@ -401,7 +251,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "ProjetinhoCF Route Table 2"
+                        "Value": "Projetinho Route Table 2"
                     },
                     {
                         "Key": "Application",
@@ -465,19 +315,6 @@
                 ]
             }
         },
-        "NotificationTopic": {
-            "Type": "AWS::SNS::Topic",
-            "Properties": {
-                "Subscription": [
-                    {
-                        "Endpoint": {
-                            "Ref": "OperatorEMail"
-                        },
-                        "Protocol": "email"
-                    }
-                ]
-            }
-        },
         "WebServerGroup": {
             "Type": "AWS::AutoScaling::AutoScalingGroup",
             "Properties": {
@@ -493,23 +330,12 @@
                     "Ref": "LaunchConfig"
                 },
                 "MinSize": "2",
-                "MaxSize": "4",
+                "MaxSize": "100",
                 "TargetGroupARNs": [
                     {
                         "Ref": "ALBTargetGroup"
                     }
-                ],
-                "NotificationConfiguration": {
-                    "TopicARN": {
-                        "Ref": "NotificationTopic"
-                    },
-                    "NotificationTypes": [
-                        "autoscaling:EC2_INSTANCE_LAUNCH",
-                        "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
-                        "autoscaling:EC2_INSTANCE_TERMINATE",
-                        "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
-                    ]
-                }
+                ]
             },
             "CreationPolicy": {
                 "ResourceSignal": {
@@ -522,116 +348,12 @@
                     "MinInstancesInService": "1",
                     "MaxBatchSize": "1",
                     "PauseTime": "PT15M",
-                    "WaitOnResourceSignals": "true"
+                    "WaitOnResourceSignals": "false"
                 }
             }
         },
         "LaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
-            "Metadata": {
-                "Comment": "Install a simple application",
-                "AWS::CloudFormation::Init": {
-                    "config": {
-                        "packages": {
-                            "yum": {
-                                "httpd": []
-                            }
-                        },
-                        "files": {
-                            "/var/www/html/index.html": {
-                                "content": {
-                                    "Fn::Join": [
-                                        "\n",
-                                        [
-                                            "<img src=\"",
-                                            {
-                                                "Fn::FindInMap": [
-                                                    "Region2Examples",
-                                                    {
-                                                        "Ref": "AWS::Region"
-                                                    },
-                                                    "Examples"
-                                                ]
-                                            },
-                                            "/cloudformation_graphic.png\" alt=\"AWS CloudFormation Logo\"/>",
-                                            "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
-                                        ]
-                                    ]
-                                },
-                                "mode": "000644",
-                                "owner": "root",
-                                "group": "root"
-                            },
-                            "/etc/cfn/cfn-hup.conf": {
-                                "content": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            "[main]\n",
-                                            "stack=",
-                                            {
-                                                "Ref": "AWS::StackId"
-                                            },
-                                            "\n",
-                                            "region=",
-                                            {
-                                                "Ref": "AWS::Region"
-                                            },
-                                            "\n"
-                                        ]
-                                    ]
-                                },
-                                "mode": "000400",
-                                "owner": "root",
-                                "group": "root"
-                            },
-                            "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
-                                "content": {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            "[cfn-auto-reloader-hook]\n",
-                                            "triggers=post.update\n",
-                                            "path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init\n",
-                                            "action=/opt/aws/bin/cfn-init -v ",
-                                            "         --stack ",
-                                            {
-                                                "Ref": "AWS::StackName"
-                                            },
-                                            "         --resource LaunchConfig ",
-                                            "         --region ",
-                                            {
-                                                "Ref": "AWS::Region"
-                                            },
-                                            "\n",
-                                            "runas=root\n"
-                                        ]
-                                    ]
-                                },
-                                "mode": "000400",
-                                "owner": "root",
-                                "group": "root"
-                            }
-                        },
-                        "services": {
-                            "sysvinit": {
-                                "httpd": {
-                                    "enabled": "true",
-                                    "ensureRunning": "true"
-                                },
-                                "cfn-hup": {
-                                    "enabled": "true",
-                                    "ensureRunning": "true",
-                                    "files": [
-                                        "/etc/cfn/cfn-hup.conf",
-                                        "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            },
             "Properties": {
                 "KeyName": {
                     "Ref": "KeyName"
@@ -646,7 +368,7 @@
                             "Fn::FindInMap": [
                                 "AWSInstanceType2Arch",
                                 {
-                                    "Ref": "InstanceType"
+                                    "Ref": "EC2InstanceType"
                                 },
                                 "Arch"
                             ]
@@ -655,11 +377,11 @@
                 },
                 "SecurityGroups": [
                     {
-                        "Ref": "InstanceSecurityGroup"
+                        "Ref": "EC2SecurityGroup"
                     }
                 ],
                 "InstanceType": {
-                    "Ref": "InstanceType"
+                    "Ref": "EC2InstanceType"
                 },
                 "UserData": {
                     "Fn::Base64": {
@@ -736,11 +458,11 @@
         "CPUAlarmHigh": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
-                "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+                "AlarmDescription": "Scale-up if CPU > 90% for 5 minutes",
                 "MetricName": "CPUUtilization",
                 "Namespace": "AWS/EC2",
                 "Statistic": "Average",
-                "Period": "300",
+                "Period": "150",
                 "EvaluationPeriods": "2",
                 "Threshold": "90",
                 "AlarmActions": [
@@ -790,23 +512,12 @@
             "Properties": {
                 "SubnetMappings": [
                     {
-                        "AllocationId": {
-                            "Fn::GetAtt": [
-                                "FirstEIP",
-                                "AllocationId"
-                            ]
-                        },
                         "SubnetId": {
                             "Ref": "PublicSubnet1"
                         }
                     },
                     {
-                        "AllocationId": {
-                            "Fn::GetAtt": [
-                                "SecondEIP",
-                                "AllocationId"
-                            ]
-                        },
+                        
                         "SubnetId": {
                             "Ref": "PublicSubnet2"
                         }
