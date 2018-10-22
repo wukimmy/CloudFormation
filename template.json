@@ -575,17 +575,12 @@
                     ]
                 }
             },
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Timeout": "PT30M",
-                    "Count": "1"
-                }
-            },
             "UpdatePolicy": {
                 "AutoScalingRollingUpdate": {
                     "MinInstancesInService": "1",
                     "MaxBatchSize": "1",
                     "PauseTime": "PT15M",
+                    "MinSuccessfulInstancesPercent": "20",
                     "WaitOnResourceSignals": "true"
                 }
             }
@@ -704,7 +699,8 @@
                             "",
                             [
                                 "#!/bin/bash -x\n",
-                                "sudo yum update -y\n",
+                                "sudo su",
+                                "yum update -y\n",
                                 "yum -y install git\n",
                                 "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
                                 ". /.nvm/nvm.sh\n",
@@ -714,16 +710,16 @@
                                 "npm install\n",
                                 "npm install --global gulp\n",
                                 "gulp\n",
-                                "sudo yum -y install nginx\n",
-                                "sudo cp -rf /tech-u /usr/share/nginx/html/\n",
-                                "sudo nginx\n",
+                                "yum -y install nginx\n",
+                                "cp -rf /tech-u /usr/share/nginx/html/\n",
+                                "nginx\n",
                                 "# Signal the status from cfn-init\n",
                                 "/opt/aws/bin/cfn-signal -e $? ",
                                 "         --stack ",
                                 {
                                     "Ref": "AWS::StackName"
                                 },
-                                "         --resource MyInstance ",
+                                "         --resource UserData ",
                                 "         --region ",
                                 {
                                     "Ref": "AWS::Region"

@@ -1,0 +1,10 @@
+git --version
+node -v
+nvm -v
+npm -v
+gulp -v
+cd /var/log
+tail -n 55 cloud-init-output.log
+
+cd /var/log
+tail -f cloud-init-output.log
