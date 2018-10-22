@@ -755,13 +755,13 @@
         "CPUAlarmHigh": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
-                "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+                "AlarmDescription": "Scale-up if CPU > 20% for 5 minutes",
                 "MetricName": "CPUUtilization",
                 "Namespace": "AWS/EC2",
                 "Statistic": "Average",
-                "Period": "300",
+                "Period": "150",
                 "EvaluationPeriods": "2",
-                "Threshold": "90",
+                "Threshold": "20",
                 "AlarmActions": [
                     {
                         "Ref": "WebServerScaleUpPolicy"
