@@ -510,7 +510,8 @@
             "autoscaling:EC2_INSTANCE_TERMINATE",
             "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
           ]
-        }
+        },
+        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
       },
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
