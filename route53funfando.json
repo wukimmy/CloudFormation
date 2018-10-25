@@ -1,17 +1,14 @@
 {
-  "AWSTemplateFormatVersion" : "2010-09-09",
-
-  "Description" : "AWS CloudFormation Sample Template EC2InstanceWithSecurityGroupSample: Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
-
-  "Parameters" : {
-    "KeyName" : {
-      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the bastion host",
-      "Type" : "AWS::EC2::KeyPair::KeyName",
-      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation Sample Template EC2InstanceWithSecurityGroupSample: Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Parameters": {
+    "KeyName": {
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the bastion host",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
-
-    "SSHLocation" : {
-      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+    "SSHLocation": {
+      "Description": "The IP address range that can be used to SSH to the EC2 instances",
       "Type": "String",
       "MinLength": "9",
       "MaxLength": "18",
@@ -19,368 +16,777 @@
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
       "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
     },
-
-    "EC2InstanceType" : {
-      "Description" : "EC2 instance type",
-      "Type" : "String",
-      "Default" : "t2.small",
-      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
-,
-      "ConstraintDescription" : "must be a valid EC2 instance type."
-
-
+    "InstanceType": {
+      "Description": "EC2 instance type",
+      "Type": "String",
+      "Default": "t2.small",
+      "AllowedValues": [
+        "t1.micro",
+        "t2.nano",
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "t2.large",
+        "m1.small",
+        "m1.medium",
+        "m1.large",
+        "m1.xlarge",
+        "m2.xlarge",
+        "m2.2xlarge",
+        "m2.4xlarge",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "m4.large",
+        "m4.xlarge",
+        "m4.2xlarge",
+        "m4.4xlarge",
+        "m4.10xlarge",
+        "c1.medium",
+        "c1.xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "c4.large",
+        "c4.xlarge",
+        "c4.2xlarge",
+        "c4.4xlarge",
+        "c4.8xlarge",
+        "g2.2xlarge",
+        "g2.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "i2.8xlarge",
+        "d2.xlarge",
+        "d2.2xlarge",
+        "d2.4xlarge",
+        "d2.8xlarge",
+        "hi1.4xlarge",
+        "hs1.8xlarge",
+        "cr1.8xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge"
+      ],
+      "ConstraintDescription": "must be a valid EC2 instance type."
     },
-        "HostedZoneID": {
-            "Type": "String",
-            "Description": "The DNS name of tech-u"
-        }
-  },
-
-  "Mappings" : {
-    "SubnetConfig" : {
-      "VPC"     : { "CIDR" : "196.0.0.0/16" },
-      "Public1"  : { "CIDR" : "196.0.1.0/24" },
-      "Public2"  : { "CIDR" : "196.0.2.0/24" }
+    "HostedZoneID": {
+      "Type": "String",
+      "Description": "The DNS name of tech-u"
     },
-
-    "AWSInstanceType2Arch" : {
-      "t2.micro"    : { "Arch" : "HVM64"  }
-    },
-
-    "AWSInstanceType2NATArch" : {
-      "t2.micro"    : { "Arch" : "NATHVM64" }
-    },
-
-    "AWSRegionArch2AMI" : {
-      "us-east-1" : {"HVM64" : "ami-04681a1dbd79675a5", "HVMG2" : "ami-0a584ac55a7631c0c"}
+    "OperatorEMail": {
+      "Description": "EMail address to notify if there are any scaling operations",
+      "Type": "String",
+      "AllowedPattern": "([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)",
+      "ConstraintDescription": "must be a valid email address."
     }
   },
-
-  "Resources" : {
-
-    "RecordSetGroup": {
-            "Type": "AWS::Route53::RecordSetGroup",
-            "Properties": {
-                "HostedZoneId": {
-                    "Ref":"HostedZoneID"
-                },      
-
-                "RecordSets": [
-                    {
-                        "Name": "www.kimmy.tk",
-                        "Type": "A",
-                        "AliasTarget": {
-                            "DNSName" : { "Fn::GetAtt" : ["LoadBalancer","DNSName"] },
-                            "EvaluateTargetHealth": false,
-                            "HostedZoneId": {"Fn::GetAtt" : ["LoadBalancer","CanonicalHostedZoneID"] }
-                        }
-
-                    }
-                ]
-            }
-        },
-
-
-    "VPC" : {
-      "Type" : "AWS::EC2::VPC",
-      "Properties" : {
-        "EnableDnsSupport" : true,
-        "EnableDnsHostnames" : true,
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ]},
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Ref" : "AWS::StackName" } },
-          { "Key" : "Network", "Value" : "Public"}
-         ]
-      }
-    },
-
-    "PublicSubnet1" : {
-      "Type" : "AWS::EC2::Subnet",
-      "Properties" : {
-        "AvailabilityZone" : "us-east-1a",
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public1", "CIDR" ]},
-        "VpcId" : { "Ref" : "VPC" },
-                "Tags" : [
-          { "Key" : "Name", "Value" : "Public Subnet 1" },
-          { "Key" : "Application", "Value" : {"Ref" : "AWS::StackName" } },
-          { "Key" : "Network", "Value" : "Public"  } ]
+  "Mappings": {
+    "SubnetConfig": {
+      "VPC": {
+        "CIDR": "196.0.0.0/16"
       },
-      "DependsOn" : "VPC"
-    },
-
-    "PublicSubnet2" : {
-      "Type" : "AWS::EC2::Subnet",
-      "Properties" : {
-        "AvailabilityZone" : "us-east-1b",
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public2", "CIDR" ]},
-        "VpcId" : { "Ref" : "VPC" },
-        "Tags" : [
-          { "Key" : "Name", "Value" : "Public Subnet 2" },
-          { "Key" : "Application", "Value" : {"Ref" : "AWS::StackName" } },
-          { "Key" : "Network", "Value" : "Public"  } ]
+      "Public1": {
+        "CIDR": "196.0.1.0/24"
       },
-      "DependsOn" : "VPC"
-    },
-
-    "IGW" : {
-      "Type" : "AWS::EC2::InternetGateway",
-         "Properties" : {
-            "Tags" : [
-              {"Key" : "Name", "Value" : "ProjetinhoCF IGW"},
-              { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
-              { "Key" : "Network", "Value" : "Public" }
-            ]
-         }
-    },
-
-    "GatewayToInternet" : {
-       "Type" : "AWS::EC2::VPCGatewayAttachment",
-       "Properties" : {
-         "VpcId" : { "Ref" : "VPC" },
-         "InternetGatewayId" : { "Ref" : "IGW" }
-       }
-    },
-
-    "PublicRouteTable1" : {
-      "Type" : "AWS::EC2::RouteTable",
-         "Properties" : {
-            "VpcId" : { "Ref" : "VPC" },
-            "Tags" : [
-              { "Key" : "Name", "Value" : "ProjetinhoCF Route Table 1" },
-              { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
-              { "Key" : "Network", "Value" : "Public" }
-           ]
-         }
-    },
-
-    "PublicRoute1" : {
-         "Type" : "AWS::EC2::Route",
-         "DependsOn" : "IGW",
-         "Properties" : {
-            "RouteTableId" : { "Ref" : "PublicRouteTable1" },
-            "DestinationCidrBlock" : "0.0.0.0/0",
-            "GatewayId" : { "Ref" : "IGW" }
-         }
-      },
-
-
-    "PublicSubnetRouteTableAssociation1" : {
-      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet1" },
-        "RouteTableId" : { "Ref" : "PublicRouteTable1" }
+      "Public2": {
+        "CIDR": "196.0.2.0/24"
       }
     },
-
-    "PublicRouteTable2" : {
-      "Type" : "AWS::EC2::RouteTable",
-         "Properties" : {
-            "VpcId" : { "Ref" : "VPC" },
-            "Tags" : [
-              { "Key" : "Name", "Value" : "ProjetinhoCF Route Table 2" },
-              { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
-              { "Key" : "Network", "Value" : "Public" }
-           ]
-         }
-    },
-
-    "PublicRoute2" : {
-         "Type" : "AWS::EC2::Route",
-         "DependsOn" : "IGW",
-         "Properties" : {
-            "RouteTableId" : { "Ref" : "PublicRouteTable2" },
-            "DestinationCidrBlock" : "0.0.0.0/0",
-            "GatewayId" : { "Ref" : "IGW" }
-         }
-      },
-
-
-    "PublicSubnetRouteTableAssociation2" : {
-      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet2" },
-        "RouteTableId" : { "Ref" : "PublicRouteTable2" }
+    "AWSInstanceType2Arch": {
+      "t2.micro": {
+        "Arch": "HVM64"
       }
     },
-
-    "EC2Host1" : {
-      "Type" : "AWS::EC2::Instance",
-      "DependsOn" : "GatewayToInternet",
-      "Properties" : {
-        "InstanceType" : { "Ref" : "EC2InstanceType" },
-        "KeyName"  : { "Ref" : "KeyName" },
-        "ImageId"  : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                         { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "EC2InstanceType" }, "Arch" ] } ] },
-        "NetworkInterfaces" : [{
-          "GroupSet"                 : [{ "Ref" : "EC2SecurityGroup" }],
-          "AssociatePublicIpAddress" : "true",
-          "DeviceIndex"              : "0",
-          "DeleteOnTermination"      : "true",
-          "SubnetId"                 : { "Ref" : "PublicSubnet1" }
-        }],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -xe\n",
-          "sudo yum update -y\n",
-          "yum -y install git\n",
-          "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
-          ". /.nvm/nvm.sh\n",
-          "nvm install 4.4.5\n",
-          "git clone https://github.com/bemer/tech-u.git\n",
-          "cd tech-u\n",
-          "npm install\n",
-          "npm install --global gulp\n",
-          "gulp\n",
-          "sudo amazon-linux-extras install -y nginx1.12\n",
-          "sudo cp -rf /tech-u /usr/share/nginx/html/\n",
-          "sudo nginx\n"
-        ]]}}
+    "AWSInstanceType2NATArch": {
+      "t2.micro": {
+        "Arch": "NATHVM64"
       }
     },
-
-    "EC2Host2" : {
-      "Type" : "AWS::EC2::Instance",
-      "DependsOn" : "GatewayToInternet",
-      "Properties" : {
-        "InstanceType" : { "Ref" : "EC2InstanceType" },
-        "KeyName"  : { "Ref" : "KeyName" },
-        "ImageId"  : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                         { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "EC2InstanceType" }, "Arch" ] } ] },
-        "NetworkInterfaces" : [{
-          "GroupSet"                 : [{ "Ref" : "EC2SecurityGroup" }],
-          "AssociatePublicIpAddress" : "true",
-          "DeviceIndex"              : "0",
-          "DeleteOnTermination"      : "true",
-          "SubnetId"                 : { "Ref" : "PublicSubnet2" }
-        }],
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -xe\n",
-          "sudo yum update -y\n",
-          "yum -y install git\n",
-          "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
-          ". /.nvm/nvm.sh\n",
-          "nvm install 4.4.5\n",
-          "git clone https://github.com/bemer/tech-u.git\n",
-          "cd tech-u\n",
-          "npm install\n",
-          "npm install --global gulp\n",
-          "gulp\n",
-          "sudo amazon-linux-extras install -y nginx1.12\n",
-          "sudo cp -rf /tech-u /usr/share/nginx/html/\n",
-          "sudo nginx\n"
-        ]]}}
+    "AWSRegionArch2AMI": {
+      "us-east-1": {
+        "HVM64": "ami-04681a1dbd79675a5",
+        "HVMG2": "ami-0a584ac55a7631c0c"
       }
-    },
-
-
-    "EC2SecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable access to the EC2 host",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [ {
-          "IpProtocol" : "tcp",
-          "FromPort" : "22",
-          "ToPort" : "22",
-          "CidrIp" : { "Ref" : "SSHLocation" }
-        },
-        {
-          "IpProtocol" : "tcp",
-          "FromPort" : "80",
-          "ToPort" : "80",
-          "CidrIp" : "0.0.0.0/0"
-        } ]
-      }
-    },
-
-    "LoadBalancer": {
-            "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-            "Properties": {
-                "Name": {
-                    "Ref": "AWS::StackName"
-                },
-                "Subnets": [
-                  {"Ref": "PublicSubnet1"},
-                  {"Ref": "PublicSubnet2"}
-                ],
-                "SecurityGroups": [
-                    {
-                        "Ref": "EC2SecurityGroup"
-                    }
-                ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Ref": "AWS::StackName"
-                        }
-                    }
-                ]
-            }
-        },
-        "LoadBalancerListener": {
-            "Type": "AWS::ElasticLoadBalancingV2::Listener",
-            "Properties": {
-                "LoadBalancerArn": {
-                    "Ref": "LoadBalancer"
-                },
-                "Port": 80,
-                "Protocol": "HTTP",
-                "DefaultActions": [
-                    {
-                        "Type": "forward",
-                        "TargetGroupArn": {
-                            "Ref": "DefaultTargetGroup"
-                        }
-                    }
-                ]
-            }
-        },
-        "DefaultTargetGroup": {
-            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-            "Properties": {
-                "Name": { "Fn::Sub": "${AWS::StackName}-default" },
-                "VpcId": { "Ref": "VPC" },
-                "TargetType" : "instance",
-                "Targets": [
-                  { "Id": {"Ref" : "EC2Host1"}, "Port": 80 },
-                  { "Id": {"Ref" : "EC2Host2"}, "Port": 80 }
-                  
-                ],
-                "Port": 80,
-                "Protocol": "HTTP"
-            }
-        }
+    }
   },
-
-  "Outputs" : {
-    "VPCId" : {
-      "Description" : "VPCId of the newly created VPC",
-      "Value" :  { "Ref" : "VPC" }
+  "Resources": {
+    "RecordSetGroup": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "HostedZoneID"
+        },
+        "RecordSets": [
+          {
+            "Name": "www.kimmy.tk",
+            "Type": "A",
+            "AliasTarget": {
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "LoadBalancer",
+                  "DNSName"
+                ]
+              },
+              "EvaluateTargetHealth": false,
+              "HostedZoneId": {
+                "Fn::GetAtt": [
+                  "LoadBalancer",
+                  "CanonicalHostedZoneID"
+                ]
+              }
+            }
+          }
+        ]
+      }
     },
-    "PublicSubnet1" : {
-      "Description" : "SubnetId of the public subnet",
-      "Value" :  { "Ref" : "PublicSubnet1" }
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true,
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "VPC",
+            "CIDR"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      }
     },
-    "PublicSubnet2" : {
-      "Description" : "SubnetId of the public subnet",
-      "Value" :  { "Ref" : "PublicSubnet2" }
+    "PublicSubnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "Public1",
+            "CIDR"
+          ]
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Public Subnet 1"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      },
+      "DependsOn": "VPC"
     },
-    "DNSName1" : {
-      "Description" : "DNS Name of the EC2 host",
-      "Value" :  { "Fn::GetAtt" : ["EC2Host1", "PublicDnsName"] }
+    "PublicSubnet2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1b",
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "Public2",
+            "CIDR"
+          ]
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Public Subnet 2"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      },
+      "DependsOn": "VPC"
     },
-    "DNSName2" : {
-      "Description" : "DNS Name of the EC2 host",
-      "Value" :  { "Fn::GetAtt" : ["EC2Host2", "PublicDnsName"] }
+    "IGW": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ProjetinhoCF IGW"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      }
+    },
+    "GatewayToInternet": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "IGW"
+        }
+      }
+    },
+    "PublicRouteTable1": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ProjetinhoCF Route Table 1"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      }
+    },
+    "PublicRoute1": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "IGW",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicRouteTable1"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "IGW"
+        }
+      }
+    },
+    "PublicSubnetRouteTableAssociation1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnet1"
+        },
+        "RouteTableId": {
+          "Ref": "PublicRouteTable1"
+        }
+      }
+    },
+    "PublicRouteTable2": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ProjetinhoCF Route Table 2"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      }
+    },
+    "PublicRoute2": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "IGW",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicRouteTable2"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "IGW"
+        }
+      }
+    },
+    "PublicSubnetRouteTableAssociation2": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnet2"
+        },
+        "RouteTableId": {
+          "Ref": "PublicRouteTable2"
+        }
+      }
+    },
+    "EC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Enable access to the EC2 host",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": {
+              "Ref": "SSHLocation"
+            }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "LoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": {
+          "Ref": "AWS::StackName"
+        },
+        "Subnets": [
+          {
+            "Ref": "PublicSubnet1"
+          },
+          {
+            "Ref": "PublicSubnet2"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          }
+        ]
+      }
+    },
+    "LoadBalancerListener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancer"
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": {
+              "Ref": "DefaultTargetGroup"
+            }
+          }
+        ]
+      }
+    },
+    "DefaultTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-default"
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "TargetType": "instance",
+        "Targets": [
+          {
+            "Id": {
+              "Ref": "EC2Host1"
+            },
+            "Port": 80
+          },
+          {
+            "Id": {
+              "Ref": "EC2Host2"
+            },
+            "Port": 80
+          }
+        ],
+        "Port": 80,
+        "Protocol": "HTTP"
+      }
+    },
+    "NotificationTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "OperatorEMail"
+            },
+            "Protocol": "email"
+          }
+        ]
+      }
+    },
+    "WebServerGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "VPCZoneIdentifier" : { "Ref" : "Subnets" },
+        "AvailabilityZones": {
+          "Fn::GetAZs" : {
+            "Ref": "AWS::Region"
+          }
+        },
+        "LaunchConfigurationName": {
+          "Ref": "LaunchConfig"
+        },
+        "MinSize": "1",
+        "MaxSize": "100",
+        "LoadBalancerNames": [
+          {
+            "Ref": "LoadBalancer"
+          }
+        ],
+        "NotificationConfiguration": {
+          "TopicARN": {
+            "Ref": "NotificationTopic"
+          },
+          "NotificationTypes": [
+            "autoscaling:EC2_INSTANCE_LAUNCH",
+            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+            "autoscaling:EC2_INSTANCE_TERMINATE",
+            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+          ]
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "1",
+          "MaxBatchSize": "1",
+          "PauseTime": "PT15M",
+          "MinSuccessfulInstancesPercent": "20",
+          "WaitOnResourceSignals": "true"
+        }
+      }
+    },
+    "LaunchConfig": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata": {
+        "Comment": "Install a simple application",
+        "AWS::CloudFormation::Init": {
+          "config": {
+            "packages": {
+              "yum": {
+                "httpd": []
+              }
+            },
+            "files": {
+              "/var/www/html/index.html": {
+                "content": {
+                  "Fn::Join": [
+                    "\n",
+                    [
+                      "<img src=\"",
+                      {
+                        "Fn::FindInMap": [
+                          "Region2Examples",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "Examples"
+                        ]
+                      },
+                      "/cloudformation_graphic.png\" alt=\"AWS CloudFormation Logo\"/>",
+                      "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
+                    ]
+                  ]
+                },
+                "mode": "000644",
+                "owner": "root",
+                "group": "root"
+              },
+              "/etc/cfn/cfn-hup.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "[main]\n",
+                      "stack=",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      "\n",
+                      "region=",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "\n"
+                    ]
+                  ]
+                },
+                "mode": "000400",
+                "owner": "root",
+                "group": "root"
+              }
+            },
+            "services": {
+              "sysvinit": {
+                "httpd": {
+                  "enabled": "true",
+                  "ensureRunning": "true"
+                },
+                "cfn-hup": {
+                  "enabled": "true",
+                  "ensureRunning": "true",
+                  "files": [
+                    "/etc/cfn/cfn-hup.conf",
+                    "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -x\n",
+                "sudo su",
+                "yum update -y\n",
+                "yum -y install git\n",
+                "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash\n",
+                ". /.nvm/nvm.sh\n",
+                "nvm install 4.4.5\n",
+                "git clone https://github.com/bemer/tech-u.git\n",
+                "cd tech-u\n",
+                "npm install\n",
+                "npm install --global gulp\n",
+                "gulp\n",
+                "yum -y install nginx\n",
+                "cp -rf /tech-u /usr/share/nginx/html/\n",
+                "nginx\n",
+                "# Signal the status from cfn-init\n",
+                "/opt/aws/bin/cfn-signal -e $? ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                "         --resource UserData ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                }
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "WebServerScaleUpPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "1"
+      }
+    },
+    "WebServerScaleDownPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "-1"
+      }
+    },
+    "CPUAlarmHigh": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-up if CPU > 20% for 1 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "60",
+        "EvaluationPeriods": "2",
+        "Threshold": "20",
+        "AlarmActions": [
+          {
+            "Ref": "WebServerScaleUpPolicy"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold"
+      }
+    },
+    "CPUAlarmLow": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "70",
+        "AlarmActions": [
+          {
+            "Ref": "WebServerScaleDownPolicy"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold"
+      }
+    }
+  },
+  "Outputs": {
+    "VPCId": {
+      "Description": "VPCId of the newly created VPC",
+      "Value": {
+        "Ref": "VPC"
+      }
+    },
+    "PublicSubnet1": {
+      "Description": "SubnetId of the public subnet",
+      "Value": {
+        "Ref": "PublicSubnet1"
+      }
+    },
+    "PublicSubnet2": {
+      "Description": "SubnetId of the public subnet",
+      "Value": {
+        "Ref": "PublicSubnet2"
+      }
+    },
+    "DNSName1": {
+      "Description": "DNS Name of the EC2 host",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Host1",
+          "PublicDnsName"
+        ]
+      }
+    },
+    "DNSName2": {
+      "Description": "DNS Name of the EC2 host",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Host2",
+          "PublicDnsName"
+        ]
+      }
     },
     "LoadBalancerUrl": {
-        "Description": "The URL of the ALB",
-        "Value": {
-            "Fn::GetAtt": [
-                "LoadBalancer",
-                "DNSName"
-            ]
-        }
+      "Description": "The URL of the ALB",
+      "Value": {
+        "Fn::GetAtt": [
+          "LoadBalancer",
+          "DNSName"
+        ]
+      }
     }
   }
 }

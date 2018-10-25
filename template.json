@@ -557,7 +557,7 @@
                     "Ref": "LaunchConfig"
                 },
                 "MinSize": "1",
-                "MaxSize": "3",
+                "MaxSize": "100",
                 "LoadBalancerNames": [
                     {
                         "Ref": "ElasticLoadBalancer"
@@ -755,11 +755,11 @@
         "CPUAlarmHigh": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
-                "AlarmDescription": "Scale-up if CPU > 20% for 5 minutes",
+                "AlarmDescription": "Scale-up if CPU > 20% for 1 minutes",
                 "MetricName": "CPUUtilization",
                 "Namespace": "AWS/EC2",
                 "Statistic": "Average",
-                "Period": "120",
+                "Period": "60",
                 "EvaluationPeriods": "2",
                 "Threshold": "20",
                 "AlarmActions": [
