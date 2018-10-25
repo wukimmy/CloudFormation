@@ -949,6 +949,7 @@
         }
       },
       "Properties": {
+        "AssociatePublicIpAddress": "true",
         "KeyName": {
           "Ref": "KeyName"
         },
@@ -1039,13 +1040,13 @@
     "CPUAlarmHigh": {
       "Type": "AWS::CloudWatch::Alarm",
       "Properties": {
-        "AlarmDescription": "Scale-up if CPU > 20% for 1 minutes",
+        "AlarmDescription": "Scale-up if CPU > 70% for 1 minutes",
         "MetricName": "CPUUtilization",
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
         "Period": "60",
         "EvaluationPeriods": "2",
-        "Threshold": "20",
+        "Threshold": "70",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleUpPolicy"
