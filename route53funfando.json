@@ -19,7 +19,7 @@
     "InstanceType": {
       "Description": "EC2 instance type",
       "Type": "String",
-      "Default": "t2.small",
+      "Default": "t2.micro",
       "AllowedValues": [
         "t1.micro",
         "t2.nano",
@@ -441,31 +441,24 @@
       }
     },
     "DefaultTargetGroup": {
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties": {
-        "Name": {
-          "Fn::Sub": "${AWS::StackName}-default"
-        },
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "TargetType": "instance",
-        "Targets": [
-          {
-            "Id": {
-              "Ref": "EC2Host1"
-            },
-            "Port": 80
-          },
-          {
-            "Id": {
-              "Ref": "EC2Host2"
-            },
-            "Port": 80
-          }
-        ],
-        "Port": 80,
-        "Protocol": "HTTP"
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+
+      "Properties" : {
+
+        "HealthCheckIntervalSeconds" : 30,
+
+        "HealthCheckTimeoutSeconds" : 25,
+
+        "HealthyThresholdCount" : 3,
+
+        "Port" : 80,
+
+        "Protocol" : "HTTP",
+
+        "UnhealthyThresholdCount" : 5,
+
+        "VpcId" : {"Ref" : "VPC"}
+
       }
     },
     "NotificationTopic": {
@@ -484,22 +477,19 @@
     "WebServerGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
-        "VPCZoneIdentifier" : { "Ref" : "Subnets" },
-        "AvailabilityZones": {
-          "Fn::GetAZs" : {
-            "Ref": "AWS::Region"
+        "VPCZoneIdentifier": [
+          {
+            "Ref": "PublicSubnet1"
+          },
+          {
+            "Ref": "PublicSubnet2"
           }
-        },
+        ],
         "LaunchConfigurationName": {
           "Ref": "LaunchConfig"
         },
         "MinSize": "1",
         "MaxSize": "100",
-        "LoadBalancerNames": [
-          {
-            "Ref": "LoadBalancer"
-          }
-        ],
         "NotificationConfiguration": {
           "TopicARN": {
             "Ref": "NotificationTopic"
@@ -511,7 +501,11 @@
             "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
           ]
         },
-        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
+        "TargetGroupARNs": [
+          {
+            "Ref": "DefaultTargetGroup"
+          }
+        ]
       },
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
@@ -535,30 +529,7 @@
               }
             },
             "files": {
-              "/var/www/html/index.html": {
-                "content": {
-                  "Fn::Join": [
-                    "\n",
-                    [
-                      "<img src=\"",
-                      {
-                        "Fn::FindInMap": [
-                          "Region2Examples",
-                          {
-                            "Ref": "AWS::Region"
-                          },
-                          "Examples"
-                        ]
-                      },
-                      "/cloudformation_graphic.png\" alt=\"AWS CloudFormation Logo\"/>",
-                      "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
-                    ]
-                  ]
-                },
-                "mode": "000644",
-                "owner": "root",
-                "group": "root"
-              },
+              
               "/etc/cfn/cfn-hup.conf": {
                 "content": {
                   "Fn::Join": [
@@ -762,24 +733,6 @@
         "Ref": "PublicSubnet2"
       }
     },
-    "DNSName1": {
-      "Description": "DNS Name of the EC2 host",
-      "Value": {
-        "Fn::GetAtt": [
-          "EC2Host1",
-          "PublicDnsName"
-        ]
-      }
-    },
-    "DNSName2": {
-      "Description": "DNS Name of the EC2 host",
-      "Value": {
-        "Fn::GetAtt": [
-          "EC2Host2",
-          "PublicDnsName"
-        ]
-      }
-    },
     "LoadBalancerUrl": {
       "Description": "The URL of the ALB",
       "Value": {
@@ -788,6 +741,13 @@
           "DNSName"
         ]
       }
+    },
+    "URL" : {
+
+      "Description" : "URL of the website",
+
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "LoadBalancer", "DNSName" ]}]]}
+
     }
   }
 }
