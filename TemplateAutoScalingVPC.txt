@@ -1,0 +1,40 @@
+Custo por ano
+levar fisicamente os meus servidores
+    - Snowball
+suporte para migração
+aprendizado da nuvem da AWS
+Comparação da akamai dos pops
+Região indicada
+SAP e Microsoft como eu migro
+F5 tablaut 
+Key Management service
+
+ALB e Classico:
+Classico tem tempo de warm up
+L446
+ "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-default"
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "TargetType": "instance",
+        "Targets": [
+          {
+            "Id": {
+              "Ref": "EC2Host1"
+            },
+            "Port": 80
+          },
+          {
+            "Id": {
+              "Ref": "EC2Host2"
+            },
+            "Port": 80
+          }
+        ],
+        "Port": 80,
+        "Protocol": "HTTP"
+      }

@@ -27,6 +27,7 @@
         "t2.small",
         "t2.medium",
         "t2.large",
+        "t3.micro",
         "m1.small",
         "m1.medium",
         "m1.large",
@@ -118,6 +119,9 @@
         "Arch": "HVM64"
       },
       "t2.large": {
+        "Arch": "HVM64"
+      },
+      "t3.micro": {
         "Arch": "HVM64"
       },
       "m1.small": {
@@ -279,6 +283,9 @@
         "Arch": "NATHVM64"
       },
       "t2.large": {
+        "Arch": "NATHVM64"
+      },
+      "t3.micro": {
         "Arch": "NATHVM64"
       },
       "m1.small": {
@@ -864,7 +871,7 @@
         "LaunchConfigurationName": {
           "Ref": "LaunchConfig"
         },
-        "MinSize": "1",
+        "MinSize": "2",
         "MaxSize": "100",
         "NotificationConfiguration": {
           "TopicARN": {
@@ -885,7 +892,7 @@
       },
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
-          "MinInstancesInService": "1",
+          "MinInstancesInService": "2",
           "MaxBatchSize": "1",
           "PauseTime": "PT15M",
           "MinSuccessfulInstancesPercent": "20",
